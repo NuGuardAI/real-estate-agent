@@ -21,28 +21,11 @@ def main():
     
     # Sidebar configuration
     with st.sidebar:
+
+        
         st.header("⚙️ Configuration")
         
-        # API Key inputs with validation
-        with st.expander("🔑 API Keys", expanded=True):
-            openai_key = st.text_input(
-                "OpenAI API Key", 
-                value=DEFAULT_OPENAI_API_KEY, 
-                type="password",
-                help="Get your API key from https://aistudio.google.com/app/apikey",
-                placeholder="AIza..."
-            )
-            firecrawl_key = st.text_input(
-                "Firecrawl API Key", 
-                value=DEFAULT_FIRECRAWL_API_KEY, 
-                type="password",
-                help="Get your API key from https://firecrawl.dev",
-                placeholder="fc_..."
-            )
-            
-            # Update environment variables
-            if openai_key: os.environ["OPENAI_API_KEY"] = openai_key
-            if firecrawl_key: os.environ["FIRECRAWL_API_KEY"] = firecrawl_key
+        
         
         # Website selection
         with st.expander("🌐 Search Sources", expanded=True):
@@ -166,10 +149,6 @@ def main():
     if submitted:
         # Validate all required inputs
         missing_items = []
-        if not openai_key:
-            missing_items.append("OpenAI API Key")
-        if not firecrawl_key:
-            missing_items.append("Firecrawl API Key")
         if not city:
             missing_items.append("City")
         if not selected_websites:
@@ -226,8 +205,8 @@ def main():
                 state=state,
                 user_criteria=user_criteria,
                 selected_websites=selected_websites,
-                firecrawl_api_key=firecrawl_key,
-                openai_api_key=openai_key,
+                firecrawl_api_key=DEFAULT_FIRECRAWL_API_KEY,
+                openai_api_key=DEFAULT_OPENAI_API_KEY,
                 update_callback=update_progress
             )
             

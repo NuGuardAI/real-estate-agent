@@ -98,7 +98,7 @@ EXTRACTION INSTRUCTIONS:
    - agent_contact: Agent name/phone if visible
 
 3. CRITICAL REQUIREMENTS:
-   - Extract AT LEAST 10 properties if they exist on the page
+   - Extract AT MOST 2 properties if they exist on the page
    - Do NOT skip properties even if some fields are missing
    - Use "Not specified" for missing optional fields
    - Ensure address and price are always filled
