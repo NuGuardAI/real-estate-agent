@@ -1,5 +1,6 @@
-agno
+gunicorn
 streamlit
+agno
 dotenv
 firecrawl
 pydantic
