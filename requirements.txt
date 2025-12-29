@@ -1,0 +1,5 @@
+agno
+streamlit
+dotenv
+firecrawl
+pydantic
