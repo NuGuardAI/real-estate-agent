@@ -1,6 +1,10 @@
 gunicorn
 streamlit
 agno
-dotenv
+python-dotenv
 firecrawl
 pydantic
+fastapi
+uvicorn
+google-genai
+openai

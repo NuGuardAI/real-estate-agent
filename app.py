@@ -1,8 +1,11 @@
 import streamlit as st
 import os
 import time
+from dotenv import load_dotenv
 
 from agent import run_sequential_analysis, display_properties_professionally
+
+load_dotenv()
 
 DEFAULT_FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
 DEFAULT_OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

@@ -8,3 +8,9 @@ __pycache__/
 
 # vscode/azure files
 .vscode/
+
+# env files
+.env
+
+# virtual environments
+.venv/
