@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import logging
 from typing import List, Optional, Dict, Any
 
 from fastapi import FastAPI, HTTPException
@@ -10,6 +11,9 @@ from dotenv import load_dotenv
 from agent import run_sequential_analysis
 
 load_dotenv(override=True)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("real_estate_api")
 
 app = FastAPI(title="Real-Estate Agent API", version="1.0.0")
 
@@ -66,15 +70,22 @@ def analyze(req: PropertyRequest) -> PropertyResponse:
     def _noop_update(_progress: float, _status: str, _activity: Optional[str] = None) -> None:
         return None
 
-    result = run_sequential_analysis(
-        city=req.city,
-        state=req.state or "",
-        user_criteria=user_criteria,
-        selected_websites=req.selected_websites,
-        firecrawl_api_key=DEFAULT_FIRECRAWL_API_KEY,
-        openai_api_key=DEFAULT_OPENAI_API_KEY,
-        update_callback=_noop_update,
-    )
+    try:
+        result = run_sequential_analysis(
+            city=req.city,
+            state=req.state or "",
+            user_criteria=user_criteria,
+            selected_websites=req.selected_websites,
+            firecrawl_api_key=DEFAULT_FIRECRAWL_API_KEY,
+            openai_api_key=DEFAULT_OPENAI_API_KEY,
+            update_callback=_noop_update,
+        )
+    except Exception as exc:
+        logger.exception("Analysis failed")
+        raise HTTPException(
+            status_code=502,
+            detail={"error": "analysis_failed", "message": str(exc)},
+        ) from exc
 
     if isinstance(result, dict):
         return PropertyResponse(
@@ -82,6 +93,21 @@ def analyze(req: PropertyRequest) -> PropertyResponse:
             market_analysis=result.get("market_analysis", ""),
             property_valuations=result.get("property_valuations", ""),
             total_properties=result.get("total_properties", 0),
+        )
+
+    if isinstance(result, str) and result.startswith("No properties found"):
+        return PropertyResponse(
+            properties=[],
+            market_analysis="",
+            property_valuations="",
+            total_properties=0,
+        )
+
+    if isinstance(result, str) and result.startswith("Error in property search:"):
+        logger.warning("Property search error: %s", result)
+        raise HTTPException(
+            status_code=502,
+            detail={"error": "property_search_failed", "message": result},
         )
 
     raise HTTPException(status_code=500, detail=str(result))
